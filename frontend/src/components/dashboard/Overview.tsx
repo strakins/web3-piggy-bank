@@ -31,6 +31,23 @@ const Overview: React.FC = () => {
   const { dashboardStats, recentActivity, refetchAll } = useDashboardData();
   const { refetch: refetchSavings } = useSavingsBalance();
 
+  // Placeholder data for undefined variables (to be connected to real contracts)
+  const userTier = {
+    tierName: 'Starter',
+    tier: 1
+  };
+  const nftBalance = dashboardStats?.userNFTs || 0;
+  const achievementPoints = 0; // TODO: Connect to contract when available
+  const activities = recentActivity || [];
+  const contractStats = {
+    totalDeposits: dashboardStats?.totalDeposited?.toString() || '0',
+    totalRewardsPaid: dashboardStats?.totalRewards?.toString() || '0',
+    totalUsers: 1
+  };
+  const userSummary = {
+    currentBalance: dashboardStats?.totalBalance?.toString() || '0'
+  };
+
   // Real-time clock update every second
   useEffect(() => {
     const timer = setInterval(() => {

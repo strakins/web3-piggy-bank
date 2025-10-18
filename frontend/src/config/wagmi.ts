@@ -15,7 +15,6 @@ import {
 } from '@rainbow-me/rainbowkit/wallets'
 import { configureChains, createConfig } from 'wagmi'
 import { defineChain } from 'viem'
-import { mainnet, sepolia } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -108,7 +107,7 @@ export const wagmiConfig = createConfig({
   publicClient
 })
 
-
+export { chains }
 
 export const getPreferredNetwork = () => {
   const isProduction = import.meta.env.PROD
