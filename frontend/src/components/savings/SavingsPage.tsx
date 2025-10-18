@@ -203,7 +203,8 @@ const SavingsPage: React.FC = () => {
   })
 
   const { isLoading: isWithdrawConfirming } = useWaitForTransaction({
-    hash: withdrawTxHash?.hash,
+    ...(withdrawTxHash?.hash && { hash: withdrawTxHash.hash }),
+    enabled: !!withdrawTxHash?.hash,
     onSuccess: () => {
       toast.success('Withdrawal completed successfully!')
       realData.refetchAll()
@@ -211,7 +212,8 @@ const SavingsPage: React.FC = () => {
   })
 
   const { isLoading: isEmergencyConfirming } = useWaitForTransaction({
-    hash: emergencyTxHash?.hash,
+    ...(emergencyTxHash?.hash && { hash: emergencyTxHash.hash }),
+    enabled: !!emergencyTxHash?.hash,
     onSuccess: () => {
       toast.success('Emergency withdrawal completed successfully!')
       realData.refetchAll()
