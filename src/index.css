@@ -1032,9 +1032,13 @@ body::after {
     padding: 0 18px;
   }
 
+  .nav-actions {
+    display: none;
+  }
+
   .hero-title {
     font-size: 2.4rem;
-  }
+  } 
 
   .feature-card,
   .panel-card {
