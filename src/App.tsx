@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'react-hot-toast'
 import { ClientProviders, useDAppConnector } from './components/ClientProviders'
 import { WalletButton } from './components/WalletButton'
@@ -227,16 +227,6 @@ function AppContent() {
   const [hederaService, setHederaService] = useState<ModernHederaService | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    initializeHedera()
-  }, [dAppConnector])
-
-  useEffect(() => {
-    if (userAccountId && hederaService) {
-      loadAccountData(userAccountId)
-    }
-  }, [userAccountId, hederaService])
-
   const initializeHedera = () => {
     if (dAppConnector) {
       const hedera = new ModernHederaService('testnet')
@@ -251,16 +241,24 @@ function AppContent() {
     }
   }
 
-  const loadAccountData = async (accountId: string) => {
+  const loadAccountData = useCallback(async (accountId: string) => {
     if (!hederaService) {
       console.log('HederaService not initialized');
+      setIsLoading(false); // Ensure loading is false when service not ready
       return;
     }
     
     try {
       console.log('Loading account data for:', accountId);
       setIsLoading(true);
-      const accountData = await hederaService.getAccount(accountId);
+
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Account query timeout after 30 seconds')), 30000)
+      );
+
+      const accountDataPromise = hederaService.getAccount(accountId);
+      const accountData = await Promise.race([accountDataPromise, timeoutPromise]) as any;
       
       console.log('Account data loaded:', accountData);
       
@@ -275,9 +273,25 @@ function AppContent() {
       console.error('Failed to load account data:', error);
       setAccount(null);
     } finally {
+      console.log('Finishing account data load, setting loading to false');
       setIsLoading(false);
     }
-  }
+  }, [hederaService])
+
+  useEffect(() => {
+    initializeHedera()
+  }, [dAppConnector])
+
+  useEffect(() => {
+    if (userAccountId && hederaService) {
+      console.log('UserAccount and HederaService ready, loading account data');
+      loadAccountData(userAccountId);
+    } else if (!userAccountId) {
+      console.log('No user account, resetting states');
+      setAccount(null);
+      setIsLoading(false);
+    }
+  }, [userAccountId, hederaService, loadAccountData])
 
   const refreshAccountData = async () => {
     if (userAccountId) {
