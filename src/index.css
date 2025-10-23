@@ -53,6 +53,56 @@ body::after {
   width: 100%;
 }
 
+/* Added for Faucet Section */
+.faucet-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.faucet-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.faucet-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.faucet-info p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.faucet-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.faucet-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.faucet-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -972,10 +1022,13 @@ body::after {
   .hero-layout {
     gap: 2.5rem;
   }
+  .logo {
+    font-size: 1.5rem;    
+  }
 
   .nav {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
     max-width: 100%;
     padding: 1rem 1.25rem;
@@ -1000,6 +1053,16 @@ body::after {
   .home-main {
     padding-top: 4rem;
   }
+
+   .faucet-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .faucet-btn {
+    width: 100%;
+  }
+
 
   .hero-section {
     padding-bottom: 4rem;
@@ -1029,18 +1092,43 @@ body::after {
 
 @media (max-width: 576px) {
   .container {
-    padding: 0 18px;
+    padding: 0 10px;
   }
 
   .nav {
     padding: 0.6rem 1rem;
     border-radius: 999px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 0.9rem;    
   }
 
-  .nav-actions {
-    display: none;
+  .account-display {
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(3, 4, 19, 0.65);
+    border: 1px solid rgba(39, 80, 253, 0.4);
   }
 
+  .btn {
+    /* display: ; */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(39, 80, 253, 0.4);
+    background: #2750fd;
+    color: #f7f8ff;
+    font-weight: 600;
+    font-size: 0.7rem;
+  }
   .hero-title {
     font-size: 1.6rem;
   }
@@ -1061,8 +1149,7 @@ body::after {
   }
 
   .wallet-info {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
   }
 
   .wallet-info .btn {

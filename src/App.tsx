@@ -3,8 +3,9 @@ import { toast } from 'react-hot-toast'
 import { ClientProviders, useDAppConnector } from './components/ClientProviders'
 import { WalletButton } from './components/WalletButton'
 import Dashboard from './components/Dashboard'
-import { ModernHederaService } from './services/ModernHederaService'
-import { PiggyBankAccount } from './types'
+import { ModernHederaService } from './services/ModernHederaService';
+import { PiggyBankAccount } from './types';
+import { FaucetService } from './services/FausetServices'
 
 function HomePage() {
   const currentYear = new Date().getFullYear()
@@ -226,6 +227,8 @@ function AppContent() {
   const [account, setAccount] = useState<PiggyBankAccount | null>(null)
   const [hederaService, setHederaService] = useState<ModernHederaService | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isRequestingTokens, setIsRequestingTokens] = useState(false)
+  // const [faucetService] = useState(() => new FaucetService('testnet'))
 
   const initializeHedera = () => {
     if (dAppConnector) {
@@ -277,6 +280,9 @@ function AppContent() {
       setIsLoading(false);
     }
   }, [hederaService])
+
+ 
+
 
   useEffect(() => {
     initializeHedera()
@@ -372,6 +378,69 @@ function AppContent() {
     }
   }
 
+//  const handleRequestTestTokens = async () => {
+//     if (!userAccountId) {
+//       toast.error('Wallet not connected')
+//       return
+//     }
+
+//     try {
+//       setIsRequestingTokens(true)
+//       const result = await faucetService.requestTestTokens(userAccountId)
+      
+//       if (result.success) {
+//         toast.success(result.message)
+//         // Refresh balance after a delay to account for transaction processing
+//         setTimeout(() => {
+//           if (userAccountId) {
+//             loadAccountData(userAccountId)
+//           }
+//         }, 5000)
+//       } else {
+//         toast.error(result.message)
+//       }
+//     } catch (error) {
+//       console.error('Token request failed:', error)
+//       toast.error('Failed to request test tokens. Please try again.')
+//     } finally {
+//       setIsRequestingTokens(false)
+//     }
+//   } 
+
+// Update your handleRequestTestTokens function in AppContent
+const handleRequestTestTokens = async () => {
+  if (!userAccountId) {
+    toast.error('Wallet not connected');
+    return;
+  }
+
+  try {
+    setIsRequestingTokens(true);
+    
+    // Option A: Redirect to Hedera Portal Faucet
+    window.open(`https://portal.hedera.com/?network=testnet&accountId=${userAccountId}`, '_blank');
+    
+    // Option B: Redirect to HashPack Faucet
+    // window.open(`https://testnet.faucet.hashpack.app/`, '_blank');
+    
+    toast.success('Opening testnet faucet... Please complete the request in the new tab.');
+    
+    // Auto-refresh balance after 30 seconds
+    setTimeout(() => {
+      if (userAccountId) {
+        loadAccountData(userAccountId);
+        toast.success('Balance refreshed. Check if test tokens arrived!');
+      }
+    }, 30000);
+    
+  } catch (error) {
+    console.error('Faucet request failed:', error);
+    toast.error('Failed to open faucet. Please visit portal.hedera.com manually.');
+  } finally {
+    setIsRequestingTokens(false);
+  }
+};
+
   if (!userAccountId) {
     return (
       <HomePage />
@@ -395,6 +464,24 @@ function AppContent() {
       
       <main className="main dashboard-main">
         <div className="container">
+          {/* New Feature of fuacet req */}
+          <div className="faucet-banner animate-in">
+            <div className="faucet-content">
+              <div className="faucet-info">
+                <h3>🎁 Get Test Tokens</h3>
+                <p>
+                  Need HBAR to test PiggyBank? Get 100 test HBAR for free to start staking and exploring the platform.
+                </p>
+              </div>
+              <button
+                className="btn btn-primary faucet-btn"
+                onClick={handleRequestTestTokens}
+                disabled={isRequestingTokens}
+              >
+                {isRequestingTokens ? 'Requesting...' : 'Get 100 HBAR Test Tokens'}
+              </button>
+            </div>
+          </div>
           <Dashboard
             account={account}
             userAccountId={userAccountId}
