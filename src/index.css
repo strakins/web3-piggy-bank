@@ -1022,10 +1022,13 @@ body::after {
   .hero-layout {
     gap: 2.5rem;
   }
+  .logo {
+    font-size: 1.5rem;    
+  }
 
   .nav {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
     max-width: 100%;
     padding: 1rem 1.25rem;
@@ -1089,18 +1092,43 @@ body::after {
 
 @media (max-width: 576px) {
   .container {
-    padding: 0 18px;
+    padding: 0 10px;
   }
 
   .nav {
     padding: 0.6rem 1rem;
     border-radius: 999px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 0.9rem;    
   }
 
-  .nav-actions {
-    display: none;
+  .account-display {
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(3, 4, 19, 0.65);
+    border: 1px solid rgba(39, 80, 253, 0.4);
   }
 
+  .btn {
+    /* display: ; */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(39, 80, 253, 0.4);
+    background: #2750fd;
+    color: #f7f8ff;
+    font-weight: 600;
+    font-size: 0.7rem;
+  }
   .hero-title {
     font-size: 1.6rem;
   }
@@ -1121,8 +1149,7 @@ body::after {
   }
 
   .wallet-info {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
   }
 
   .wallet-info .btn {

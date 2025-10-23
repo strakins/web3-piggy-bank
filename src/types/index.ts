@@ -21,7 +21,7 @@ export interface TransactionResult {
   transactionId?: string;
   error?: string;
   receipt?: any;
-}
+} 
 
 export interface WalletConnection {
   accountId: string;

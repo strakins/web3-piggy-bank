@@ -228,7 +228,7 @@ function AppContent() {
   const [hederaService, setHederaService] = useState<ModernHederaService | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isRequestingTokens, setIsRequestingTokens] = useState(false)
-  const [faucetService] = useState(() => new FaucetService('testnet'))
+  // const [faucetService] = useState(() => new FaucetService('testnet'))
 
   const initializeHedera = () => {
     if (dAppConnector) {
@@ -280,6 +280,9 @@ function AppContent() {
       setIsLoading(false);
     }
   }, [hederaService])
+
+ 
+
 
   useEffect(() => {
     initializeHedera()
@@ -475,7 +478,7 @@ const handleRequestTestTokens = async () => {
                 onClick={handleRequestTestTokens}
                 disabled={isRequestingTokens}
               >
-                {isRequestingTokens ? 'Requesting...' : 'Get 30 HBAR Test Tokens'}
+                {isRequestingTokens ? 'Requesting...' : 'Get 100 HBAR Test Tokens'}
               </button>
             </div>
           </div>

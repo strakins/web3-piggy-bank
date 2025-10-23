@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { PiggyBankAccount } from '../types'
 
 interface DashboardProps {
-  account: PiggyBankAccount | null
+  account: PiggyBankAccount | null 
   userAccountId: string
   isLoading: boolean
   onDeposit: (amount: number) => Promise<void>
