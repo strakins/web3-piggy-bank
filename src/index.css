@@ -1032,12 +1032,23 @@ body::after {
     padding: 0 18px;
   }
 
+  .nav {
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+  }
+
   .nav-actions {
     display: none;
   }
 
   .hero-title {
-    font-size: 2.4rem;
+    font-size: 1.6rem;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: #aab3ff;
+    max-width: 560px;
+    line-height: 1.6;
   } 
 
   .feature-card,

@@ -23,7 +23,7 @@ interface DAppConnectorWithEvents extends DAppConnector {
   };
 }
 
-const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID ?? '';
+const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID ?? 'f5a466b813b93f6face44cb8b9db0571';
 const queryClient = new QueryClient();
 
 const metadata = {
