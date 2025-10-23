@@ -40,7 +40,7 @@ function HomePage() {
               </p>
               <div className="hero-actions animate-in animate-delay-3">
                 <WalletButton />
-                <a className="hero-link" href="#learn-more">
+                <a className="hero-link btn-add" href="#learn-more">
                   Explore the platform
                 </a>
               </div>
@@ -159,7 +159,7 @@ function HomePage() {
                     </p>
                   </div>
                 </li>
-              </ul>
+              </ul> 
             </div>
 
             <div className="panel-card panel-card-highlight animate-in animate-delay-1">
