@@ -1,18 +1,20 @@
 import {
   Client,
   AccountId,
+  ContractId,
   ContractExecuteTransaction,
   ContractCallQuery,
   ContractFunctionParameters,
+  ContractFunctionResult,
   Hbar,
   TransactionId,
 } from '@hashgraph/sdk';
-import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
+import { DAppConnector, DAppSigner } from '@hashgraph/hedera-wallet-connect';
 import { PiggyBankAccount, StakeInfo } from '../types';
 
 export class ModernHederaService {
   private client: Client;
-  private contractId: string | null = null;
+  private contractId: ContractId | null = null;
   private dAppConnector: DAppConnector | null = null;
 
   constructor(network: 'testnet' | 'mainnet' = 'testnet') {
@@ -28,7 +30,49 @@ export class ModernHederaService {
   }
 
   public setContractId(contractId: string) {
-    this.contractId = contractId;
+    try {
+      if (contractId.startsWith('0x') || contractId.startsWith('0X')) {
+        this.contractId = ContractId.fromEvmAddress(0, 0, contractId);
+      } else {
+        this.contractId = ContractId.fromString(contractId);
+      }
+    } catch (error) {
+      console.error('Invalid contract ID provided to ModernHederaService:', contractId, error);
+      throw error instanceof Error ? error : new Error('Invalid contract ID format');
+    }
+  }
+
+  private getAvailableSigner(targetAccountId?: string): DAppSigner | null {
+    if (!this.dAppConnector) {
+      return null;
+    }
+
+    try {
+      if (targetAccountId) {
+        const account = AccountId.fromString(targetAccountId);
+        return this.dAppConnector.getSigner(account);
+      }
+
+      const fallback = this.dAppConnector.signers?.[0];
+      return fallback ?? null;
+    } catch (error) {
+      console.warn('Unable to resolve signer for query payment', error);
+      return null;
+    }
+  }
+
+  private async executeQueryWithSignerFallback(
+    query: ContractCallQuery,
+    accountIdForSigner?: string
+  ): Promise<ContractFunctionResult> {
+    const signer = this.getAvailableSigner(accountIdForSigner);
+
+    if (signer) {
+      query.setMaxQueryPayment(new Hbar(2));
+      return query.executeWithSigner(signer);
+    }
+
+    throw new Error('No signer available to authorize contract query payment');
   }
 
   public async deposit(amount: number, accountId: string): Promise<any> {
@@ -39,7 +83,7 @@ export class ModernHederaService {
     try {
       const hedEraAccountId = AccountId.fromString(accountId);
       const signer = this.dAppConnector.getSigner(hedEraAccountId);
-      console.log('Starting deposit transaction:', { amount, accountId, contractId: this.contractId });
+      console.log('Starting deposit transaction:', { amount, accountId, contractId: this.contractId.toString() });
       
       const transaction = new ContractExecuteTransaction()
         .setContractId(this.contractId)
@@ -183,7 +227,7 @@ export class ModernHederaService {
       const parsedAccountId = AccountId.fromString(accountId);
       const solidityAddress = parsedAccountId.toSolidityAddress();
       
-      console.log('Querying account:', { accountId, solidityAddress, contractId: this.contractId });
+      console.log('Querying account:', { accountId, solidityAddress, contractId: this.contractId.toString() });
       
       const query = new ContractCallQuery()
         .setContractId(this.contractId)
@@ -193,7 +237,7 @@ export class ModernHederaService {
           new ContractFunctionParameters().addAddress(solidityAddress)
         );
 
-      const queryResult = await query.execute(this.client);
+      const queryResult = await this.executeQueryWithSignerFallback(query, accountId);
       
       console.log('Query result received:', queryResult);
       
@@ -259,15 +303,17 @@ export class ModernHederaService {
     }
 
     try {
+      const solidityAddress = AccountId.fromString(accountId).toSolidityAddress();
+
       const query = new ContractCallQuery()
         .setContractId(this.contractId)
         .setGas(100000)
         .setFunction(
           'getActiveStakes',
-          new ContractFunctionParameters().addAddress(accountId)
+          new ContractFunctionParameters().addAddress(solidityAddress)
         );
 
-      const queryResult = await query.execute(this.client);
+      const queryResult = await this.executeQueryWithSignerFallback(query, accountId);
       
       // This is a simplified version - you may need to adjust based on your contract's return format
       const stakes: StakeInfo[] = [];
@@ -294,7 +340,7 @@ export class ModernHederaService {
           new ContractFunctionParameters().addUint256(amount)
         );
 
-      const result = await query.execute(this.client);
+      const result = await this.executeQueryWithSignerFallback(query);
       return result.getUint256(0).toNumber();
     } catch (error) {
       console.error('Error calculating penalty:', error);

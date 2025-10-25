@@ -12,3 +12,6 @@ coverage/
 .cache/
 *.tgz
 *.tar.gz
+artifacts
+artifacts-hedera
+cache
